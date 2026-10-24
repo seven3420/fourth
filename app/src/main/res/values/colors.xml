@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="navy_900">#17233A</color>
+    <color name="navy_700">#2B4364</color>
+    <color name="navy_300">#AEBACD</color>
+    <color name="navy_100">#E5EBF4</color>
+    <color name="coral_500">#D66B5C</color>
+    <color name="coral_700">#A74A3F</color>
+    <color name="teal_700">#24736E</color>
+    <color name="teal_100">#DDF0EC</color>
+    <color name="background">#F4F6F9</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="ink">#202936</color>
+    <color name="ink_muted">#5B6678</color>
+    <color name="divider">#DCE2EA</color>
+    <color name="card_face">#FFFDFA</color>
+    <color name="white">#FFFFFFFF</color>
+</resources>
