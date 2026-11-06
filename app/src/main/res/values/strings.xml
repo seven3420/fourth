@@ -1,0 +1,65 @@
+<resources>
+    <string name="app_name">卓怡霖 2024110152</string>
+
+    <!-- 主界面 -->
+    <string name="main_title_format">%1$s · %2$s</string>
+    <string name="profile_section">基本信息</string>
+    <string name="record_section">游戏记录</string>
+    <string name="name_format">姓名：%s</string>
+    <string name="gender_format">性别：%s</string>
+    <string name="stu_id_format">学号：%s</string>
+    <string name="phone_format">电话：%s</string>
+    <string name="email_format">邮件地址：%s</string>
+    <string name="hobby_format">爱好：%s</string>
+    <string name="high_score_format">游戏最高分：%d</string>
+    <string name="edit_person">修改个人信息</string>
+    <string name="start_game">翻牌游戏</string>
+
+    <!-- 编辑信息界面 -->
+    <string name="edit_title">信息修改</string>
+    <string name="avatar">头像</string>
+    <string name="avatar_description">玩家头像</string>
+    <string name="pick_avatar">选择头像</string>
+    <string name="label_name">姓名</string>
+    <string name="label_gender">性别：</string>
+    <string name="label_stuid">学号</string>
+    <string name="label_phone">电话号码</string>
+    <string name="label_email">电子邮件地址</string>
+    <string name="mime_type_image" translatable="false">image/*</string>
+    <string name="male">男</string>
+    <string name="female">女</string>
+    <string name="hobby_label">爱好：</string>
+    <string name="hobby_travel">旅行</string>
+    <string name="hobby_read">阅读</string>
+    <string name="hobby_game">游戏</string>
+    <string name="hobby_shop">购物</string>
+    <string name="hobby_separator" translatable="false"> </string>
+    <string name="save">保存</string>
+    <string name="cancel">取消</string>
+
+    <!-- 游戏界面 -->
+    <string name="game_title">翻牌游戏</string>
+    <string name="score_format">得分：%d</string>
+    <string name="score_label">得分</string>
+    <string name="score_zero">0</string>
+    <string name="group_progress_format">已匹配 %1$d / %2$d 组</string>
+    <string name="pair_progress_format">已配对 %1$d / %2$d 对</string>
+    <string name="card_back_description">第 %1$d 张牌，未翻开</string>
+    <string name="card_face_description">第 %1$d 张牌，已翻开</string>
+    <string name="reset_game">重置游戏</string>
+    <string name="exit">退出</string>
+    <string name="game_win">恭喜通关！</string>
+
+    <!-- 默认值 -->
+    <string name="default_name">张三</string>
+    <string name="default_gender">男</string>
+    <string name="default_stuid">20240001</string>
+    <string name="default_phone">13800138000</string>
+    <string name="default_email">zhangsan@example.com</string>
+
+    <!-- 菜单与对话框 -->
+    <string name="menu_about">关于</string>
+    <string name="about_title">关于翻牌游戏</string>
+    <string name="about_message">本实验为Android MVC + RecyclerView翻牌游戏，支持三张卡牌匹配。</string>
+    <string name="btn_ok">确定</string>
+</resources>

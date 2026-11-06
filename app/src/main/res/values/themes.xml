@@ -1,0 +1,59 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Base.Theme.Fourth" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <item name="colorPrimary">@color/navy_900</item>
+        <item name="colorPrimaryVariant">@color/navy_900</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/coral_500</item>
+        <item name="colorSecondaryVariant">@color/coral_700</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="android:windowBackground">@color/background</item>
+        <item name="android:statusBarColor">@color/navy_900</item>
+        <item name="android:navigationBarColor">@color/navy_900</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
+        <item name="materialButtonStyle">@style/Widget.Fourth.Button.Primary</item>
+        <item name="textInputStyle">@style/Widget.Fourth.TextInputLayout</item>
+    </style>
+
+    <style name="Theme.Fourth" parent="Base.Theme.Fourth" />
+
+    <style name="Widget.Fourth.Button.Primary" parent="Widget.MaterialComponents.Button">
+        <item name="android:minHeight">50dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="backgroundTint">@color/coral_500</item>
+        <item name="cornerRadius">8dp</item>
+        <item name="iconTint">@color/white</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">8dp</item>
+    </style>
+
+    <style name="Widget.Fourth.Button.Secondary" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:minHeight">50dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/navy_700</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="backgroundTint">@color/surface</item>
+        <item name="cornerRadius">8dp</item>
+        <item name="strokeColor">@color/navy_300</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="iconTint">@color/navy_700</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">8dp</item>
+    </style>
+
+    <style name="Widget.Fourth.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">8dp</item>
+        <item name="boxCornerRadiusTopEnd">8dp</item>
+        <item name="boxCornerRadiusBottomStart">8dp</item>
+        <item name="boxCornerRadiusBottomEnd">8dp</item>
+        <item name="boxStrokeColor">@color/navy_700</item>
+        <item name="hintTextColor">@color/ink_muted</item>
+        <item name="android:textColorHint">@color/ink_muted</item>
+    </style>
+</resources>
