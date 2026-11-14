@@ -51,13 +51,22 @@
             android:textColor="@color/teal_700"
             android:textSize="14sp"
             android:textStyle="bold"
-            tools:text="@string/group_progress_format" />
+            tools:text="@string/pair_progress_format" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_game_record"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/ink_muted"
+        android:textSize="14sp"
+        tools:text="@string/game_record_format" />
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="14dp"
+        android:layout_marginTop="12dp"
         android:layout_weight="1"
         app:cardBackgroundColor="@color/surface"
         app:cardCornerRadius="8dp"
@@ -73,29 +82,12 @@
             android:padding="8dp" />
     </com.google.android.material.card.MaterialCardView>
 
-    <LinearLayout
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_reset"
+        style="@style/Widget.Fourth.Button.Primary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:orientation="horizontal">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_reset"
-            style="@style/Widget.Fourth.Button.Secondary"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/reset_game"
-            app:icon="@drawable/ic_refresh" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_exit"
-            style="@style/Widget.Fourth.Button.Primary"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_weight="1"
-            android:text="@string/exit"
-            app:icon="@drawable/ic_exit" />
-    </LinearLayout>
+        android:text="@string/reset_game"
+        app:icon="@drawable/ic_refresh" />
 </LinearLayout>

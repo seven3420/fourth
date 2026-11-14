@@ -4,24 +4,25 @@ package cn.edu.sicnu.cs.stu.zhuoyilin.fourth
  * 全局常量
  */
 object Constants {
-    // Intent Extra 键
-    const val EXTRA_NAME = "name"
-    const val EXTRA_GENDER = "gender"
-    const val EXTRA_STUID = "stuid"
-    const val EXTRA_PHONE = "phone"
-    const val EXTRA_EMAIL = "email"
-    const val EXTRA_AVATAR_URI = "avatarUri"
-    const val EXTRA_TRAVEL = "travel"
-    const val EXTRA_READ = "read"
-    const val EXTRA_GAME_HOBBY = "game"
-    const val EXTRA_SHOP = "shop"
-    const val EXTRA_GAME_SCORE = "currentGameScore"
-    const val EXTRA_OLD_MAX_SCORE = "oldMaxScore"
+    // Fragment 参数
+    const val ARG_CARDS_PER_GROUP = "cardsPerGroup"
+    const val ARG_GROUP_COUNT = "groupCount"
 
-    // SharedPreferences
-    const val PREF_NAME = "player_info"
-    const val PREF_MAX_SCORE = "max_score"
+    // 序列化文件名
+    const val FILE_STUDENT = "student_info.dat"
+    const val FILE_GAME_STATE_PREFIX = "game_state_"
+    const val FILE_GAME_RECORD_PREFIX = "game_record_"
 
-    // 游戏参数：8组，每组3张相同，共24张
-    const val GROUP_COUNT = 8
+    // 两种翻牌游戏配置
+    const val TWO_CARD_CARDS_PER_GROUP = 2
+    const val TWO_CARD_GROUP_COUNT = 8 // 8 组，共 16 张
+
+    const val THREE_CARD_CARDS_PER_GROUP = 3
+    const val THREE_CARD_GROUP_COUNT = 4 // 4 组，共 12 张
+
+    fun gameStateFile(cardsPerGroup: Int): String =
+        "$FILE_GAME_STATE_PREFIX$cardsPerGroup.dat"
+
+    fun gameRecordFile(cardsPerGroup: Int): String =
+        "$FILE_GAME_RECORD_PREFIX$cardsPerGroup.dat"
 }

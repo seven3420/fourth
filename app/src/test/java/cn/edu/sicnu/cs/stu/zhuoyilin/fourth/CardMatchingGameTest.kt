@@ -6,9 +6,13 @@ import cn.edu.sicnu.cs.stu.zhuoyilin.fourth.model.Deck
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
 
 /**
- * 翻牌游戏 Model 层单元测试（三张匹配模式）
+ * 翻牌游戏 Model 层单元测试
  */
 class CardMatchingGameTest {
 
@@ -16,14 +20,14 @@ class CardMatchingGameTest {
 
     @Before
     fun setUp() {
-        // 使用 1 组（3 张）进行快速测试
-        game = CardMatchingGame(1)
+        // 使用 2 对（4 张）进行快速测试
+        game = CardMatchingGame(2)
     }
 
     @Test
     fun testGameInitialization() {
-        // 1组应该有 3 张卡片
-        assertEquals(3, game.getCardCount())
+        // 2 对应该有 4 张卡片
+        assertEquals(4, game.getCardCount())
         // 初始分数为 0
         assertEquals(0, game.score)
         // 初始没有已配对的牌
@@ -44,55 +48,165 @@ class CardMatchingGameTest {
     }
 
     @Test
-    fun testMatchThree() {
-        // 3张牌identifier都相同
+    fun testMatchPair() {
+        // 找到一对匹配的牌
+        val card0 = game.cardAtIndex(0)
+        var matchIndex = -1
+        for (i in 1 until game.getCardCount()) {
+            if (game.cardAtIndex(i).identifier == card0.identifier) {
+                matchIndex = i
+                break
+            }
+        }
+        assertTrue("应该有一对相同的牌", matchIndex != -1)
+
         val scoreBefore = game.score
-        // 翻3张
+        // 翻第一张
         game.chooseCardAtIndex(0)
-        game.chooseCardAtIndex(1)
-        game.chooseCardAtIndex(2)
+        // 翻第二张（配对的）
+        game.chooseCardAtIndex(matchIndex)
         // 结束回合
         game.finishTurn()
 
-        assertTrue(game.cardAtIndex(0).isMatched)
-        assertTrue(game.cardAtIndex(1).isMatched)
-        assertTrue(game.cardAtIndex(2).isMatched)
-        // 分数：翻3张 -3，匹配成功 +10，总共 +7
-        assertEquals(scoreBefore + 7, game.score)
+        assertTrue(card0.isMatched)
+        assertTrue(game.cardAtIndex(matchIndex).isMatched)
+        // 分数变化：翻两张 -2，配对成功 +10，总共 +8
+        assertEquals(scoreBefore + 8, game.score)
+    }
+
+    @Test
+    fun testMismatchPair() {
+        // 找到两张不同的牌
+        val card0 = game.cardAtIndex(0)
+        var diffIndex = -1
+        for (i in 1 until game.getCardCount()) {
+            if (game.cardAtIndex(i).identifier != card0.identifier) {
+                diffIndex = i
+                break
+            }
+        }
+        assertTrue("应该有不同的牌", diffIndex != -1)
+
+        val scoreBefore = game.score
+        // 翻第一张
+        game.chooseCardAtIndex(0)
+        // 翻第二张（不配对的）
+        game.chooseCardAtIndex(diffIndex)
+        // 结束回合
+        game.finishTurn()
+
+        assertFalse(card0.isMatched)
+        assertFalse(game.cardAtIndex(diffIndex).isMatched)
+        assertFalse("未配对的牌应该翻回去", card0.isChosen)
+        assertFalse("未配对的牌应该翻回去", game.cardAtIndex(diffIndex).isChosen)
+        // 分数变化：翻两张 -2，配对失败 -2，总共 -4
+        assertEquals(scoreBefore - 4, game.score)
     }
 
     @Test
     fun testGameOver() {
         assertFalse("游戏未开始时不应结束", game.isGameOver())
-        // 翻完3张匹配
-        game.chooseCardAtIndex(0)
-        game.chooseCardAtIndex(1)
-        game.chooseCardAtIndex(2)
-        game.finishTurn()
-        assertTrue("全部匹配后游戏应结束", game.isGameOver())
+
+        // 翻完所有牌并配对
+        val matchedIndices = mutableSetOf<Int>()
+        while (matchedIndices.size < game.getCardCount()) {
+            // 找第一对未匹配的
+            var first = -1
+            for (i in 0 until game.getCardCount()) {
+                if (!game.cardAtIndex(i).isMatched) {
+                    first = i
+                    break
+                }
+            }
+            if (first == -1) break
+
+            var second = -1
+            val firstCard = game.cardAtIndex(first)
+            for (i in first + 1 until game.getCardCount()) {
+                if (!game.cardAtIndex(i).isMatched &&
+                    game.cardAtIndex(i).identifier == firstCard.identifier
+                ) {
+                    second = i
+                    break
+                }
+            }
+
+            game.chooseCardAtIndex(first)
+            game.chooseCardAtIndex(second)
+            game.finishTurn()
+            matchedIndices.add(first)
+            matchedIndices.add(second)
+        }
+
+        assertTrue("全部配对后游戏应结束", game.isGameOver())
+    }
+
+    @Test
+    fun testThreeCardGameMatchesTriple() {
+        val threeCardGame = CardMatchingGame(2, 3)
+        assertEquals(6, threeCardGame.getCardCount())
+
+        val identifier = threeCardGame.cardAtIndex(0).identifier
+        val indices = (0 until threeCardGame.getCardCount()).filter {
+            threeCardGame.cardAtIndex(it).identifier == identifier
+        }
+        assertEquals(3, indices.size)
+
+        indices.forEach { threeCardGame.chooseCardAtIndex(it) }
+        threeCardGame.finishTurn()
+
+        indices.forEach { assertTrue(threeCardGame.cardAtIndex(it).isMatched) }
+        // 翻三张 -3，配对成功 +10
+        assertEquals(7, threeCardGame.score)
+    }
+
+    @Test
+    fun testGameStateCanBeSerializedAndRestored() {
+        val savedGame = CardMatchingGame(2, 2)
+        savedGame.chooseCardAtIndex(0)
+
+        val bytes = ByteArrayOutputStream().use { output ->
+            ObjectOutputStream(output).use { it.writeObject(savedGame) }
+            output.toByteArray()
+        }
+
+        val restoredGame = ObjectInputStream(ByteArrayInputStream(bytes)).use {
+            it.readObject() as CardMatchingGame
+        }
+
+        assertEquals(savedGame.score, restoredGame.score)
+        assertEquals(savedGame.getCardCount(), restoredGame.getCardCount())
+        assertEquals(savedGame.cardsPerGroup, restoredGame.cardsPerGroup)
+        assertTrue(restoredGame.cardAtIndex(0).isChosen)
+
+        // 恢复后已翻开的牌保持翻开状态
+        restoredGame.resolvePendingTurnIfNeeded()
+        assertTrue(restoredGame.cardAtIndex(0).isChosen)
     }
 
     @Test
     fun testCardIdentifier() {
         val card1 = Card("A")
         val card2 = Card("A")
-        val card3 = Card("A")
-        val card4 = Card("B")
+        val card3 = Card("B")
 
-        assertTrue(card1.match(card2, card3))
-        assertFalse(card1.match(card2, card4))
+        assertTrue(card1.match(card2))
+        assertFalse(card1.match(card3))
         assertEquals("A", card1.toString())
     }
 
     @Test
     fun testDeckGeneratesCards() {
         val deck = Deck()
+        // 从 Deck 抽足够的牌
         val cards = mutableListOf<Card>()
         while (true) {
             val card = deck.drawRandomCard() ?: break
             cards.add(card)
         }
+        // Deck 应该能生成多个不同的点数
         assertTrue(cards.isNotEmpty())
+        // 检查卡片有 identifier
         cards.forEach { assertNotNull(it.identifier) }
     }
 }

@@ -5,12 +5,15 @@ import cn.edu.sicnu.cs.stu.zhuoyilin.fourth.model.CardMatchingGame
 /**
  * Controller for the card matching game. It owns the model, coordinates turn
  * resolution and publishes immutable snapshots to the View layer.
- * 三张匹配模式。
+ *
+ * @param groupCount 牌组数量
+ * @param cardsPerGroup 每组牌的张数（2 张牌游戏 / 3 张牌游戏）
  */
 class CardGameController(
     private val groupCount: Int,
     private val scheduler: TurnScheduler,
-    private val listener: Listener
+    private val listener: Listener,
+    private val cardsPerGroup: Int = CardMatchingGame.DEFAULT_CARDS_PER_GROUP
 ) {
 
     interface Listener {
@@ -44,21 +47,16 @@ class CardGameController(
     val score: Int
         get() = game?.score ?: 0
 
-    fun startGame() {
+    /**
+     * 开始游戏。[restoredGame] 不为 null 时恢复上次保存的游戏进度。
+     */
+    fun startGame(restoredGame: CardMatchingGame? = null) {
         scheduler.cancel()
         isTurnScheduled = false
         isClosed = false
-        game = CardMatchingGame(groupCount)
-        publishState()
-    }
-
-    /**
-     * 重置当前游戏（不重新创建Model，调用Model的reset方法）
-     */
-    fun resetGame() {
-        scheduler.cancel()
-        isTurnScheduled = false
-        game?.reset()
+        game = restoredGame ?: CardMatchingGame(groupCount, cardsPerGroup)
+        // 恢复时可能存在上次未结算的一组牌，先结算避免卡住
+        restoredGame?.resolvePendingTurnIfNeeded()
         publishState()
     }
 
@@ -69,16 +67,15 @@ class CardGameController(
         val selectedCard = currentGame.cardAtIndex(index)
         if (selectedCard.isMatched || isTurnScheduled) return
 
-        // 统计当前已翻开但未匹配的牌数量
-        val faceUpCount = (0 until currentGame.getCardCount()).count { cardIndex ->
+        val chosenCount = (0 until currentGame.getCardCount()).count { cardIndex ->
             val card = currentGame.cardAtIndex(cardIndex)
             card.isChosen && !card.isMatched
         }
-        val isRevealingThirdCard = !selectedCard.isChosen && faceUpCount == 2
+        val isRevealingLastCard = !selectedCard.isChosen && chosenCount == cardsPerGroup - 1
 
         currentGame.chooseCardAtIndex(index)
 
-        if (isRevealingThirdCard) {
+        if (isRevealingLastCard) {
             isTurnScheduled = true
             scheduler.schedule(TURN_DELAY_MILLIS) { resolveTurn() }
         }
@@ -91,6 +88,11 @@ class CardGameController(
         scheduler.cancel()
         isTurnScheduled = false
     }
+
+    /**
+     * 当前游戏对象，用于序列化保存进度。
+     */
+    fun snapshot(): CardMatchingGame? = game
 
     private fun resolveTurn() {
         if (isClosed) return
@@ -120,7 +122,7 @@ class CardGameController(
             GameState(
                 score = currentGame.score,
                 cards = cards,
-                matchedGroups = cards.count { it.isMatched } / CARDS_PER_GROUP,
+                matchedGroups = currentGame.getMatchedGroupCount(),
                 totalGroups = groupCount,
                 isResolvingTurn = isTurnScheduled
             )
@@ -129,6 +131,5 @@ class CardGameController(
 
     companion object {
         const val TURN_DELAY_MILLIS = 650L
-        private const val CARDS_PER_GROUP = 3
     }
 }

@@ -16,9 +16,5 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".EditInfoActivity"/>
-        <activity
-            android:name=".GameActivity"
-            android:configChanges="orientation|screenSize" />
     </application>
 </manifest>

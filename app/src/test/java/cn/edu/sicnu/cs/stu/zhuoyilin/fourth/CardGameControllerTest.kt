@@ -11,66 +11,97 @@ class CardGameControllerTest {
 
     @Test
     fun selectingFirstCardPublishesFaceUpState() {
-        val harness = Harness(groupCount = 1)
+        val harness = Harness(pairCount = 2)
 
         harness.controller.selectCard(0)
 
         val state = harness.listener.states.last()
-        assertEquals(3, state.cards.size)
+        assertEquals(4, state.cards.size)
         assertEquals(1, state.cards.count { it.isFaceUp })
         assertEquals(-1, state.score)
     }
 
     @Test
-    fun matchingThreeCardsAwardsBonusAndCompletesGame() {
-        val harness = Harness(groupCount = 1)
+    fun matchingPairAwardsBonusAndCompletesGame() {
+        val harness = Harness(pairCount = 1)
 
         harness.controller.selectCard(0)
         harness.controller.selectCard(1)
-        harness.controller.selectCard(2)
 
         assertTrue(harness.listener.states.last().isResolvingTurn)
-        // 翻3张 -3，匹配 +10 = +7
-        assertEquals(7, harness.listener.states.last().score)
+        assertEquals(8, harness.listener.states.last().score)
 
         harness.scheduler.runPendingAction()
 
         val finalState = harness.listener.states.last()
-        assertEquals(3, finalState.cards.count { it.isMatched })
+        assertEquals(2, finalState.cards.count { it.isMatched })
         assertFalse(finalState.isResolvingTurn)
         assertEquals(1, harness.listener.winCount)
     }
 
     @Test
-    fun mismatchedCardsAreHiddenAfterTurnResolution() {
-        // 用2组=6张牌，前3张里必然有不同identifier
-        val harness = Harness(groupCount = 2)
-        val initialCards = harness.listener.states.first().cards
+    fun mismatchedPairIsHiddenAfterTurnResolution() {
+        val harness = Harness(pairCount = 2)
+        val firstIdentifier = harness.listener.states.first().cards[0].identifier
+        val differentIndex = harness.listener.states.first().cards.indexOfFirst {
+            it.identifier != firstIdentifier
+        }
 
-        // 找3张牌：第0张，和两张不同identifier的
+        assertTrue(differentIndex > 0)
         harness.controller.selectCard(0)
-        val firstId = initialCards[0].identifier
-        val diffIndex = initialCards.indexOfFirst { it.identifier != firstId }
-        harness.controller.selectCard(diffIndex)
-
-        // 再选第三张（随便选一个未翻开的）
-        val thirdIndex = initialCards.indices.first { it != 0 && it != diffIndex }
-        harness.controller.selectCard(thirdIndex)
-
+        harness.controller.selectCard(differentIndex)
         harness.scheduler.runPendingAction()
 
         val finalState = harness.listener.states.last()
-        // 未匹配的牌应该都翻回去
-        assertEquals(0, finalState.cards.count { it.isFaceUp && !it.isMatched })
+        assertEquals(0, finalState.cards.count { it.isFaceUp })
+        assertEquals(-4, finalState.score)
         assertEquals(0, harness.listener.winCount)
     }
 
     @Test
-    fun restartCancelsPendingTurnAndRestoresInitialState() {
-        val harness = Harness(groupCount = 1)
+    fun gameContinuesAfterMatchingFirstPair() {
+        val harness = Harness(pairCount = 3)
+        val initialCards = harness.listener.states.first().cards
+        val firstIdentifier = initialCards[0].identifier
+        val matchIndex = (1 until initialCards.size).first {
+            initialCards[it].identifier == firstIdentifier
+        }
 
         harness.controller.selectCard(0)
-        harness.controller.selectCard(1)
+        harness.controller.selectCard(matchIndex)
+        harness.scheduler.runPendingAction()
+
+        val remainingIndices = initialCards.indices.filter {
+            it != 0 && it != matchIndex
+        }
+        val firstAvailable = remainingIndices.first()
+        val secondAvailable = remainingIndices.first {
+            initialCards[it].identifier != initialCards[firstAvailable].identifier
+        }
+
+        harness.controller.selectCard(firstAvailable)
+        harness.controller.selectCard(secondAvailable)
+
+        assertTrue(harness.listener.states.last().isResolvingTurn)
+
+        harness.scheduler.runPendingAction()
+
+        val finalState = harness.listener.states.last()
+        assertFalse(finalState.isResolvingTurn)
+        assertEquals(0, finalState.cards.count { it.isFaceUp && !it.isMatched })
+    }
+
+    @Test
+    fun restartCancelsPendingTurnAndRestoresInitialState() {
+        val harness = Harness(pairCount = 2)
+        val firstIdentifier = harness.listener.states.first().cards[0].identifier
+        val cards = harness.listener.states.first().cards
+        val matchIndex = (1 until cards.size).first {
+            cards[it].identifier == firstIdentifier
+        }
+
+        harness.controller.selectCard(0)
+        harness.controller.selectCard(matchIndex)
         harness.scheduler.cancelCalls = 0
 
         harness.controller.startGame()
@@ -82,10 +113,10 @@ class CardGameControllerTest {
         assertEquals(null, harness.scheduler.pendingAction)
     }
 
-    private class Harness(groupCount: Int) {
+    private class Harness(pairCount: Int) {
         val scheduler = FakeTurnScheduler()
         val listener = RecordingListener()
-        val controller = CardGameController(groupCount, scheduler, listener).also {
+        val controller = CardGameController(pairCount, scheduler, listener).also {
             it.startGame()
         }
     }

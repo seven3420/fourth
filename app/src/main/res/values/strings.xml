@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">卓怡霖 2024110152</string>
 
+    <!-- 底部导航 -->
+    <string name="tab_profile">个人信息</string>
+    <string name="tab_game_2">2张牌</string>
+    <string name="tab_game_3">3张牌</string>
+
     <!-- 主界面 -->
     <string name="main_title_format">%1$s · %2$s</string>
     <string name="profile_section">基本信息</string>
@@ -33,17 +38,21 @@
     <string name="hobby_read">阅读</string>
     <string name="hobby_game">游戏</string>
     <string name="hobby_shop">购物</string>
-    <string name="hobby_separator" translatable="false"> </string>
+    <string name="hobby_none">无</string>
+    <string name="hobby_separator">、</string>
+    <string name="info_saved">个人信息已保存</string>
     <string name="save">保存</string>
     <string name="cancel">取消</string>
 
     <!-- 游戏界面 -->
     <string name="game_title">翻牌游戏</string>
+    <string name="game_two_card_title">2 张牌翻牌游戏</string>
+    <string name="game_three_card_title">3 张牌翻牌游戏</string>
     <string name="score_format">得分：%d</string>
     <string name="score_label">得分</string>
     <string name="score_zero">0</string>
-    <string name="group_progress_format">已匹配 %1$d / %2$d 组</string>
-    <string name="pair_progress_format">已配对 %1$d / %2$d 对</string>
+    <string name="pair_progress_format">已配对 %1$d / %2$d 组</string>
+    <string name="game_record_format">历史最高分：%1$d　上一局得分：%2$d</string>
     <string name="card_back_description">第 %1$d 张牌，未翻开</string>
     <string name="card_face_description">第 %1$d 张牌，已翻开</string>
     <string name="reset_game">重置游戏</string>
@@ -57,9 +66,13 @@
     <string name="default_phone">13800138000</string>
     <string name="default_email">zhangsan@example.com</string>
 
-    <!-- 菜单与对话框 -->
+    <string name="profile_hint">底部导航可切换 2 张牌 / 3 张牌翻牌游戏</string>
+    <string name="best_score_two_format">2 张牌最高分：%d</string>
+    <string name="best_score_three_format">3 张牌最高分：%d</string>
+    <string name="last_score_format">最近一局得分：%d</string>
     <string name="menu_about">关于</string>
     <string name="about_title">关于翻牌游戏</string>
-    <string name="about_message">本实验为Android MVC + RecyclerView翻牌游戏，支持三张卡牌匹配。</string>
+    <string name="about_msg">本实验为 Android 多 Fragment 应用，包含个人信息、2 张牌与 3 张牌翻牌游戏\n数据通过对象序列化存储，实验6作业</string>
     <string name="btn_ok">确定</string>
+
 </resources>
